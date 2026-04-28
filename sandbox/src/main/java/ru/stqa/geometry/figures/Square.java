@@ -18,7 +18,7 @@ public record Square(double side) {
         return this.side * this.side;
     }
 
-    public double perimenter() {
+    public double perimeter() {
         return  this.side * 4;
     }
 }
