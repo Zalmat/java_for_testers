@@ -14,4 +14,76 @@ public class TriangleTests {
     void canTriangleArea(){
         Assertions.assertEquals(84.0, new Triangle(13,14,15).area());
     }
+
+    //Негативный тест. Проверка стороны A
+    @Test
+    void cannotTriangleWidthNegativeSideA()
+    {
+        try {
+            new Triangle(-13,14,15 );
+            Assertions.fail();
+        }
+        catch (IllegalArgumentException exception) {
+            //ok
+        }
+    }
+    //Негативный тест. Проверка стороны B
+    @Test
+    void cannotTriangleWidthNegativeSideB()
+    {
+        try {
+            new Triangle(13,-14,15 );
+            Assertions.fail();
+        }
+        catch (IllegalArgumentException exception) {
+            //ok
+        }
+    }
+    //Негативный тест. Проверка стороны C
+    @Test
+     void cannotTriangleWidthNegativeSideC()
+    {
+        try {
+            new Triangle(13,14,-15 );
+            Assertions.fail();
+        }
+        catch (IllegalArgumentException exception) {
+            //ok
+        }
+    }
+    //Негативный тест. Проверка на неравенство
+    @Test
+    void cannotTriangleInequalityOfSidesAB()
+    {
+        try {
+            new Triangle(3,3,7);
+                    Assertions.fail();
+        } catch (IllegalArgumentException exception){
+            //ok
+        }
+    }
+
+    //Негативный тест. Проверка на неравенство
+    @Test
+    void cannotTriangleInequalityOfSidesBC()
+    {
+        try {
+            new Triangle(7,3,3);
+            Assertions.fail();
+        } catch (IllegalArgumentException exception){
+            //ok
+        }
+    }
+
+    //Негативный тест. Проверка на неравенство
+    @Test
+    void cannotTriangleInequalityOfSidesAC()
+    {
+        try {
+            new Triangle(3,7,3);
+            Assertions.fail();
+        } catch (IllegalArgumentException exception){
+            //ok
+        }
+    }
 }
