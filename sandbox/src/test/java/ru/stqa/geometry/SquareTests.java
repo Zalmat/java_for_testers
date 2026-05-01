@@ -30,6 +30,28 @@ public class SquareTests {
         catch (IllegalArgumentException exception) {
             //ok
         }
+    }
+    //Ожидаемое и фактическое значения равны
+    @Test
+    void testEquality(){
+        var s1 = new Square(5.0);
+        var s2 = new Square(5.0);
+        Assertions.assertEquals(s1,s2);
+    }
 
+    //Ожидаемое и фактическое значения неравны
+    @Test
+    void testNonEquality(){
+        var s1 = new Square(5.0);
+        var s2 = new Square(4.0);
+        Assertions.assertNotEquals(s1,s2);
+    }
+
+    //Логическое сравнение.
+    @Test
+    void testPass(){
+        var s1 = new Square(5.0);
+        var s2 = new Square(5.0);
+        Assertions.assertTrue(s1.equals(s2));
     }
 }
