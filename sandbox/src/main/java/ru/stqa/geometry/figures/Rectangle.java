@@ -1,5 +1,7 @@
 package ru.stqa.geometry.figures;
 
+import java.util.Objects;
+
 public record Rectangle(
         double a,
         double b) {
@@ -19,4 +21,26 @@ public record Rectangle(
     private static double rectangleArea(double a, double b) {
         return a*b;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Rectangle rectangle = (Rectangle) o;
+        return (Double.compare(this.a, rectangle.a) == 0 && Double.compare(this.b, rectangle.b) == 0)
+                || (Double.compare(this.b, rectangle.a) == 0 && Double.compare(this.a, rectangle.b) == 0);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
+    }
+
+    /*
+    Предвыыарительная проверка будет проходить сразу, так как вырожден хэш код
+    @Override
+    public int hashCode() {
+        return 1;
+    }
+}
+     */
 }
