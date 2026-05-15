@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class ApplicationManager {
@@ -17,7 +18,9 @@ public class ApplicationManager {
             if ("firefox".equals(browser)){
                 driver = new FirefoxDriver();
             } else if ("chrome".equals(browser)){
-                    driver = new ChromeDriver();
+                driver = new ChromeDriver();
+            } else if ("edge".equals(browser)){
+                driver = new EdgeDriver();
             } else {
                 throw new IllegalArgumentException(String.format("Неизвестный браузер: %s", browser));
             }
