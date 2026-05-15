@@ -60,8 +60,10 @@ public class ContactHelper extends HelperBase{
     }
 
     private void returnToContactPage(){
-        //click(By.name("home page"));
-        click(By.xpath("/html/body/div[1]/div[3]/ul/li[1]/a"));
+        //click(By.name("home"));
+        //click(By.xpath("/html/body/div[1]/div[3]/ul/li[1]/a"));
+        click(By.xpath("//ul//*[text()='home']"));
+
     }
     public boolean isContactPresent() {
         OpenContactPageCreateForm();
