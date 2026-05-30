@@ -46,17 +46,12 @@ public class GroupHelper extends HelperBase{
     public void removeGroup() {
         OpenGroupsPage();
         selectGroup();
-        removeSelectedGroup();
+        removeSelectedGroups();
         returnToGroupsPage();
     }
 
-    private void removeSelectedGroup() {
+    private void removeSelectedGroups() {
         click(By.name("delete"));
-    }
-
-    public boolean isGroupPresent() {
-        OpenGroupsPage();
-        return manager.isElementPresent(By.name("selected[]"));
     }
 
 
@@ -79,5 +74,24 @@ public class GroupHelper extends HelperBase{
     }
     private void returnToGroupsPage() {
         click(By.linkText("group page"));
+    }
+
+    public int getCount() {
+        OpenGroupsPage(); //открыть группу
+        return manager.driver.findElements(By.name("selected[]")).size(); //найти и вернуть кол-во чекбоксов
+
+    }
+
+    public void removeAllGroups() {
+        OpenGroupsPage();
+        selectAllGroups();
+        removeSelectedGroups();
+    }
+
+    private void selectAllGroups() {
+        var checkboxes = manager.driver.findElements(By.name("selected[]"));
+        for (var checkbox : checkboxes){ //перебираем найденные элименты
+            checkbox.click();
+        }
     }
 }
