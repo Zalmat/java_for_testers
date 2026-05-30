@@ -8,6 +8,13 @@ public record ContactData(String firstname, String middlename, String lastname, 
             this("","","","","","","","","","","","","","");
         }
 
+//        public static ContactData of(String firstname, String middlename, String lastname) {
+//            return new ContactData()
+//                    .withFirstname(firstname)
+//                    .withMiddlename(middlename)
+//                    .withLastname(lastname);
+//        }
+
         public ContactData withFirstname(String firstname) {
             return new ContactData(firstname, this.middlename, this.lastname,this.nickname,
                     this.title,this.company,this.address,this.home,this.mobile,this.work,
@@ -31,6 +38,9 @@ public record ContactData(String firstname, String middlename, String lastname, 
                     this.title, this.company, this.address, this.home, this.mobile,
                     this.work, this.email, this.email2, this.email3, this.homepage);
         }
+
+
+
 
     }
 
