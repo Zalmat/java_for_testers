@@ -1,19 +1,22 @@
 package model;
 
-public record GroupData(String name, String hider, String footer) {
+public record GroupData(String id, String name, String hider, String footer) {
     public GroupData() {
-        this("","","");
+        this("", "","","");
     }
 
     public GroupData withName(String name) {
-        return new GroupData(name, this.hider, this.footer);
+        return new GroupData(this.id, name, this.hider, this.footer);
+    }
+    public GroupData withId(String id) {
+        return new GroupData(id, this.name, this.hider, this.footer);
     }
     public GroupData withHeader(String header) {
 
-        return new GroupData(this.name, header, this.footer);
+        return new GroupData(this.id, this.name, header, this.footer);
     }
     public GroupData withFooter(String footer) {
 
-        return new GroupData(this.name, this.hider, footer);
+        return new GroupData(this.id, this.name, this.hider, footer);
     }
 }
