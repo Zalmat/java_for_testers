@@ -1,7 +1,11 @@
 package manager;
 
 import model.ContactData;
+import model.GroupData;
 import org.openqa.selenium.By;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactHelper extends HelperBase{
 
@@ -17,9 +21,9 @@ public class ContactHelper extends HelperBase{
         returnToContactPage();
     }
 
-    public void removeContact(){
+    public void removeContact(ContactData contact){
         returnToContactPage();
-        SelectContact();
+        SelectContact(contact);
         removeSelectedContact();
         returnToContactPage();
     }
@@ -27,8 +31,8 @@ public class ContactHelper extends HelperBase{
         click(By.name("delete"));
     }
 
-    private void SelectContact() {
-        click(By.name("selected[]"));
+    private void SelectContact(ContactData contact) {
+        click(By.cssSelector(String.format("input[type='checkbox'][value='%s']", contact.id())));
     }
 
     public void OpenContactPageCreateForm() {
@@ -66,7 +70,42 @@ public class ContactHelper extends HelperBase{
 
     }
     public boolean isContactPresent() {
-        OpenContactPageCreateForm();
+        //OpenContactPageCreateForm();
+        returnToContactPage();
         return manager.isElementPresent(By.name("selected[]"));
+    }
+
+    public List<ContactData> getList() {
+        var contact = new ArrayList<ContactData>();
+        var entrys = manager.driver.findElements(By.cssSelector("tr[name='entry']"));
+        for (var entry : entrys) {
+            var checkbox = entry.findElement(By.cssSelector("input[type='checkbox']"));
+            String id = checkbox.getAttribute("value");
+            var str = entry.findElements(By.tagName("td"));
+            String lastName = str.get(1).getText();
+            String firstName = str.get(2).getText();
+            contact.add(new ContactData()
+                    .withId(id)
+                    .withLastname(lastName)
+                    .withFirstname(firstName));
+        }
+        return contact;
+    }
+    public void modifyContact(ContactData contact, ContactData modifyContact) {
+        returnToContactPage();
+        //OpenContactPageCreateForm();
+        SelectContact(contact);
+        initContactModification(contact);
+        fillContactForm(modifyContact);
+        submitContactModification();
+        returnToContactPage();
+    }
+
+    private void submitContactModification() {
+        click(By.cssSelector("input[name='update']"));
+    }
+
+    private void initContactModification(ContactData contact) {
+        click(By.cssSelector(String.format("a[href='edit.php?id=%s']", contact.id())));
     }
 }

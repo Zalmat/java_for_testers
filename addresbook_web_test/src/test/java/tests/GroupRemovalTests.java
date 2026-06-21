@@ -1,10 +1,12 @@
 package tests;
 
+import model.ContactData;
 import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +18,7 @@ public class GroupRemovalTests extends TestBase {
         if (app.groups().getCount() == 0) {
             app.groups().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
         }
-        //Используется принцип зполотого эталона
+        //Используется принцип золотого эталона
         var oldGroups = app.groups().getList(); //1.было
         var rnd = new Random();
         var index = rnd.nextInt(oldGroups.size()); //2. Случайным образом выбираем элемент из списка
@@ -25,6 +27,10 @@ public class GroupRemovalTests extends TestBase {
         // 5. Создается модель/обьект ожидаемого результата
         var expectedList = new ArrayList<>(oldGroups); // копираем
         expectedList.remove(index); //удаляем из копии аналогично с шагом 3
+        Comparator<GroupData> compareById = (o1, o2) ->
+                Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
+        newGroups.sort(compareById);
+        expectedList.sort(compareById);
         Assertions.assertEquals(newGroups,expectedList); //Сравниваем
     }
 

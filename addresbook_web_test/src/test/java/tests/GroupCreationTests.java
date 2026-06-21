@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class GroupCreationTests extends TestBase {
@@ -35,28 +36,36 @@ public class GroupCreationTests extends TestBase {
 //    @ParameterizedTest
 //    @ValueSource(strings = {"group name", "group name'"}) //фиксированная параметризация
 //    public void CanCreateGroup(String name)  {
-//        int groupCpunt = app.groups().getCount(); //Количество групп
+//        int groupCount = app.groups().getCount(); //Количество групп
 //        app.groups().CreateGroup(new GroupData(name, "Хидер группы", "Футер группы"));
 //        int newGroupCount = app.groups().getCount();
-//        Assertions.assertEquals(groupCpunt +1,newGroupCount);
+//        Assertions.assertEquals(groupCount +1,newGroupCount);
 //    }
 
     @ParameterizedTest
     @MethodSource("groupProvider") //сгененрировали входящие параметры для теста
     public void CanCreateMultipleGroups(GroupData group)  {
-        int groupCount = app.groups().getCount();
+        var oldGroups = app.groups().getList();
         app.groups().CreateGroup(group);
-        int newGroupCount = app.groups().getCount();
-        Assertions.assertEquals(groupCount + 1,newGroupCount);
+        var newGroups = app.groups().getList();
+        Comparator<GroupData> compareById = (o1, o2) -> {
+            return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id())); //сравниваем индентификаторы групп
+        };
+        newGroups.sort(compareById);
+
+        var expectedList = new ArrayList<>(oldGroups);
+        expectedList.add(group.withId(newGroups.get(newGroups.size()-1).id()).withHeader("").withFooter(""));
+        expectedList.sort(compareById);
+        Assertions.assertEquals(newGroups, expectedList);
     }
 
     @ParameterizedTest
     @MethodSource("negativeGroupProvider") //сгененрировали входящие параметры для теста
     public void CanNotCreateGroup(GroupData group)  {
-        int groupCount = app.groups().getCount();
+        var oldGroups = app.groups().getList();
         app.groups().CreateGroup(group);
-        int newGroupCount = app.groups().getCount();
-        Assertions.assertEquals(groupCount,newGroupCount);
+        var newGroups = app.groups().getList();
+        Assertions.assertEquals(newGroups, oldGroups);
     }
 
 
