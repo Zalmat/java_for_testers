@@ -99,6 +99,7 @@ public class GroupHelper extends HelperBase{
     }
 
     public List<GroupData> getList() {
+        OpenGroupsPage();
         var groups = new ArrayList<GroupData>();
         var spans = manager.driver.findElements(By.cssSelector("span.group")); //ищем через css
         for (var span : spans) {
