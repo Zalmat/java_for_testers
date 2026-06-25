@@ -1,5 +1,6 @@
 package manager;
 
+import model.ContactData;
 import model.GroupData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -47,5 +48,88 @@ public class JdbcHelper extends HelperBase {
             throw new RuntimeException(e);
         }
 
+    }
+    public ContactData getRandomContactWithoutGroup() {
+        try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
+             var statement = conn.createStatement();
+             var result = statement.executeQuery(
+                     "SELECT ab.id, ab.firstname, ab.lastname, ab.address, ab.middlename " +
+                             "FROM addressbook ab " +
+                             "WHERE ab.id NOT IN (" +
+                             "    SELECT DISTINCT id FROM address_in_groups" +
+                             ") " +
+                             "ORDER BY RAND() " +
+                             "LIMIT 1")) {
+
+            if (result.next()) {
+                return new ContactData()
+                        .withId(String.valueOf(result.getInt("id")))
+                        .withFirstname(result.getString("firstname"))
+                        .withLastname(result.getString("lastname"))
+                        .withAddress(result.getString("address"))
+                        .withMiddlename(result.getString("middlename"));
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isContactInAnyGroup(ContactData contact) {
+        try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
+             var statement = conn.createStatement();
+             var result = statement.executeQuery(
+                     "SELECT COUNT(*) as count FROM address_in_groups " +
+                             "WHERE id = " + Integer.parseInt(contact.id()))) {
+
+            if (result.next()) {
+                return result.getInt("count") > 0;
+            }
+            return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //Возвращаем ID групп которые нужно отвязать
+    public List<Integer> getGroupIdsForContact(ContactData contact) {
+        var groupIds = new ArrayList<Integer>();
+        try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
+             var statement = conn.createStatement();
+             var result = statement.executeQuery(
+                     "SELECT group_id FROM address_in_groups " +
+                             "WHERE id = " + Integer.parseInt(contact.id()))) {
+
+            while (result.next()) {
+                groupIds.add(result.getInt("group_id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return groupIds;
+    }
+    //Костыль..
+    public ContactData getContactByFirstnameLastname(String firstname, String lastname) {
+        try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
+             var statement = conn.createStatement();
+             var result = statement.executeQuery(
+                     "SELECT id, firstname, lastname, address, middlename " +
+                             "FROM addressbook " +
+                             "WHERE firstname = '" + firstname + "' " +
+                             "AND lastname = '" + lastname + "'")) {
+
+            if (result.next()) {
+                return new ContactData()
+                        .withId(String.valueOf(result.getInt("id")))
+                        .withFirstname(result.getString("firstname"))
+                        .withLastname(result.getString("lastname"))
+                        .withAddress(result.getString("address"))
+                        .withMiddlename(result.getString("middlename"));
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -103,6 +103,29 @@ public class ContactCreationTest extends TestBase {
         Assertions.assertEquals(oldRelated.size() +1,newRelated.size());
     }
 
+    @Test
+    void canAddContactToGroup() {
+
+        if (app.hbn().getGroupCount() == 0) {
+            app.hbn().CreateGroup(new GroupData("", "Group", "Header", "Footer"));
+        }
+        if (app.hbn().getContactCount() == 0) {
+            app.hbn().CreateContact(new ContactData()
+                    .withFirstname(CommonFunctions.randomString(10))
+                    .withLastname(CommonFunctions.randomString(10)));
+        }
+        var contact = app.jdbc().getRandomContactWithoutGroup();
+        if (contact == null) {
+            contact = new ContactData()
+                    .withFirstname(CommonFunctions.randomString(10))
+                    .withLastname(CommonFunctions.randomString(10));
+            app.contact().CreateContact(contact);
+        }
+        Assertions.assertFalse(app.jdbc().isContactInAnyGroup(contact));
+        app.contact().addContactToGroup(contact);
+        Assertions.assertTrue(app.jdbc().isContactInAnyGroup(contact));
+    }
 
 
 }
+

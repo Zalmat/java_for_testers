@@ -1,6 +1,8 @@
 package tests;
 
+import common.CommonFunctions;
 import model.ContactData;
+import model.GroupData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,5 +30,37 @@ public class ContactRemovalTests extends TestBase{
         expectedList.sort(compareById);
         expectedList.remove(index);
         Assertions.assertEquals(newContact,expectedList); //Сравниваем
+    }
+
+    @Test
+    void canRemoveContactFromGroup() {
+        if (app.hbn().getGroupCount() == 0) {
+            app.hbn().CreateGroup(new GroupData("", "Group", "Header", "Footer"));
+        }
+        var groups = app.hbn().getGroupList();
+
+        // 2. Ищем или создаем контакт
+        var contact = app.jdbc().getRandomContactWithoutGroup();
+        if (contact == null) {
+            var newContact = new ContactData()
+                    .withFirstname(CommonFunctions.randomString(10))
+                    .withLastname(CommonFunctions.randomString(10));
+            app.contact().CreateContact(newContact);
+
+
+            contact = app.jdbc().getContactByFirstnameLastname(
+                    newContact.firstname(), newContact.lastname()
+            );
+            Assertions.assertNotNull(contact, "Нет контакта в БД");
+        }
+        if (!app.jdbc().isContactInAnyGroup(contact)) {
+            app.contact().addContactToGroup(contact);
+        }
+        for (var g : groups) {
+            app.contact().removeContactFromGroup(contact, g);
+        }
+        var groupIdsAfterRemove = app.jdbc().getGroupIdsForContact(contact);
+        Assertions.assertTrue(groupIdsAfterRemove.isEmpty(),
+                "Контакт всё еще состоит в группах!");
     }
 }

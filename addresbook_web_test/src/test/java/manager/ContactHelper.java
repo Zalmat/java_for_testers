@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Select;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ContactHelper extends HelperBase{
 
     public  ContactHelper(ApplicationManager contact) {
@@ -33,6 +34,7 @@ public class ContactHelper extends HelperBase{
     private void selectGroup(GroupData group) {
         new Select(manager.driver.findElement(By.name("new_group"))).selectByValue(group.id());
     }
+
 
     public void removeContact(ContactData contact){
         returnToContactPage();
@@ -124,4 +126,45 @@ public class ContactHelper extends HelperBase{
     private void initContactModification(ContactData contact) {
         click(By.cssSelector(String.format("a[href='edit.php?id=%s']", contact.id())));
     }
+
+    public void addContactToGroup(ContactData contact) {
+        returnToContactPage();
+        SelectContact(contact);
+        selectFirstGroupToAdd();
+        submitContactToGroup();
+        returnToContactPage();
+    }
+
+    private void selectFirstGroupToAdd() {
+        var select = new Select(manager.driver.findElement(By.name("to_group")));
+        var options = select.getOptions();
+        if (options.size() > 1) {
+            select.selectByIndex(1);
+        }
+    }
+    private void submitContactToGroup() {
+        click(By.name("add"));
+    }
+
+    public void removeContactFromGroup(ContactData contact, GroupData group) {
+        
+        returnToContactPage();        
+        selectGroupToShow(group);        
+        SelectContact(contact);        
+        submitRemoveContactToGroup();        
+        returnToContactPage();
+    }
+
+    private void selectGroupToShow(GroupData group) {
+        var select = new Select(manager.driver.findElement(By.name("group")));
+        select.selectByValue(group.id());
+    }
+
+    private void submitRemoveContactToGroup() {
+        click(By.name("remove"));
+    }
+
+
+
+
 }
