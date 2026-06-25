@@ -16,10 +16,10 @@ public class ContactRemovalTests extends TestBase{
             app.contact().CreateContact(new ContactData().withFirstname("Фирст нейм для удаления").withLastname("А я томат"));
         }
         var rnd = new Random();
-        var oldContact = app.contact().getList(); // Получить первоначальный список контактов контактов
+        var oldContact = app.hbn().getContactList(); // Получить первоначальный список контактов контактов
         var index = rnd.nextInt(oldContact.size()); //2. Случайным образом выбираем элемент из списка
         app.contact().removeContact(oldContact.get(index));
-        var newContact = app.contact().getList();
+        var newContact = app.hbn().getContactList();;
         var expectedList = new ArrayList<>(oldContact);
 
         Comparator<ContactData> compareById = (o1, o2) ->

@@ -47,7 +47,8 @@ public class HibernateHelper extends HelperBase {
         return new ContactData().withId("" + record.id)
                 .withFirstname(record.firstname)
                 .withLastname(record.lastname)
-                .withAddress(record.address);
+                .withAddress(record.address)
+                .withMiddlename(record.middlename);
     }
 
     private static GroupData convert(GroupRecord record) {
@@ -66,7 +67,7 @@ public class HibernateHelper extends HelperBase {
         if ("".equals(id)) {
             id = "0";
         }
-        return new ContactRecord(Integer.parseInt(id), data.firstname(), data.lastname(), data.address());
+        return new ContactRecord(Integer.parseInt(id), data.firstname(), data.lastname(), data.address(),data.middlename());
     }
 
     public List<GroupData> getGroupList(){
@@ -75,11 +76,22 @@ public class HibernateHelper extends HelperBase {
             return session.createQuery("from GroupRecord", GroupRecord.class).list();
         }));
     }
+    public List<ContactData> getContactList() {
+        return convertContactList(sessionFactory.fromSession(session -> {
+            return session.createQuery("from ContactRecord", ContactRecord.class).list();
+        }));
+    }
 
     public long getGroupCount() {
         return sessionFactory.fromSession(session -> {
             //"from GroupRecord" это не название таблицы, а название класса
             return session.createQuery("select count (*) from GroupRecord", Long.class).getSingleResult();
+        });
+    }
+    public long getContactCount() {
+        return sessionFactory.fromSession(session -> {
+            //"from GroupRecord" это не название таблицы, а название класса
+            return session.createQuery("select count (*) from ContactRecord", Long.class).getSingleResult();
         });
     }
 
@@ -92,9 +104,20 @@ public class HibernateHelper extends HelperBase {
         });
     }
 
+    public void CreateContact(ContactData contactData) {
+
+        sessionFactory.inSession(session -> {
+            session.getTransaction().begin();
+            session.persist(convert(contactData));
+            session.getTransaction().commit();
+        });
+    }
+
     public List<ContactData> getContactsInGroup(GroupData group) {
         return sessionFactory.fromSession(session -> {
             return convertContactList(session.find(GroupRecord.class, group.id()).contacts); //в новой версии вместо get(), теперь find()
         });
     }
+
+
 }

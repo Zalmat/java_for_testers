@@ -23,9 +23,9 @@ public class ContactCreationTest extends TestBase {
     @ParameterizedTest
     @MethodSource("ContactData") //сгенерировали входящие параметры для теста
     public void CanCreateMultipleContact(ContactData contact) {
-        var oldContact = app.contact().getList();
+        var oldContact = app.hbn().getContactList();
         app.contact().CreateContact(contact);
-        var newContact = app.contact().getList();
+        var newContact = app.hbn().getContactList();
 
         Comparator<ContactData> compareById = (o1, o2) ->
                 Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));

@@ -71,9 +71,6 @@ public class GroupCreationTests extends TestBase {
     @MethodSource("singleRandomGroup")
     //@MethodSource("groupProvider") //сгененрировали входящие параметры для теста
     public void CanCreateMultipleGroup(GroupData group)  {
-        //Старая реализация до БД
-        // var oldGroups = app.groups().getList();
-        //Новая реализация
         var oldGroups = app.hbn().getGroupList(); //Получения списка уже из БД
         app.groups().CreateGroup(group);
         var newGroups = app.hbn().getGroupList();
@@ -82,7 +79,6 @@ public class GroupCreationTests extends TestBase {
         };
         newGroups.sort(compareById);
         var maxId = newGroups.get(newGroups.size()-1).id();
-
         var expectedList = new ArrayList<>(oldGroups);
         expectedList.add(group.withId(maxId));
         expectedList.sort(compareById);
@@ -92,9 +88,9 @@ public class GroupCreationTests extends TestBase {
     @ParameterizedTest
     @MethodSource("negativeGroupProvider") //сгененрировали входящие параметры для теста
     public void CanNotCreateGroup(GroupData group)  {
-        var oldGroups = app.groups().getList();
+        var oldGroups = app.hbn().getGroupList();
         app.groups().CreateGroup(group);
-        var newGroups = app.groups().getList();
+        var newGroups = app.hbn().getGroupList();
         Assertions.assertEquals(newGroups, oldGroups);
     }
 
