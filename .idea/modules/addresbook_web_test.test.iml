@@ -10,8 +10,17 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="addresbook_web_test.main" />
+    <orderEntry type="library" name="Gradle: org.jcommander:jcommander:1.83" level="project" />
+    <orderEntry type="library" name="Gradle: tools.jackson.dataformat:jackson-dataformat-xml:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: tools.jackson.core:jackson-databind:3.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter:5.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.seleniumhq.selenium:selenium-java:4.43.0" level="project" />
+    <orderEntry type="library" name="Gradle: tools.jackson.core:jackson-core:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.woodstox:woodstox-core:7.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.codehaus.woodstox:stax2-api:4.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.snakeyaml:snakeyaml-engine:2.10" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.seleniumhq.selenium:selenium-devtools-v145:4.43.0" level="project" />

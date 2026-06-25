@@ -14,6 +14,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.43.0'
+    implementation("org.jcommander:jcommander:1.83")
+    implementation('tools.jackson.core:jackson-databind:3.0.0')
+    implementation('tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0')
+    implementation 'tools.jackson.dataformat:jackson-dataformat-xml:3.0.0'
 }
 
 test {
