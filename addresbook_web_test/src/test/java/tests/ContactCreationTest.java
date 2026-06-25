@@ -85,6 +85,24 @@ public class ContactCreationTest extends TestBase {
         return result;
     }
 
+    @Test
+    void canCreateContactInGroup() {
+        var contact = new ContactData()
+                .withFirstname(CommonFunctions.randomString(10))
+                .withLastname(CommonFunctions.randomString(10))
+                .withPhoto(randomFile("src/resources/images"));
+
+        if (app.hbn().getGroupCount() == 0) {
+            app.hbn().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
+        }
+        var group = app.hbn().getGroupList().get(0);
+
+        var oldRelated = app.hbn().getContactsInGroup(group); //Получаем список контактов которые входят в заданную группу
+        app.contact().CreateContact(contact, group);
+        var newRelated = app.hbn().getContactsInGroup(group);
+        Assertions.assertEquals(oldRelated.size() +1,newRelated.size());
+    }
+
 
 
 }

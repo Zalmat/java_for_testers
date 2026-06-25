@@ -17,7 +17,10 @@ dependencies {
     implementation("org.jcommander:jcommander:1.83")
     implementation('tools.jackson.core:jackson-databind:3.0.0')
     implementation('tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0')
-    implementation 'tools.jackson.dataformat:jackson-dataformat-xml:3.0.0'
+    implementation('tools.jackson.dataformat:jackson-dataformat-xml:3.0.0')
+    implementation('com.mysql:mysql-connector-j:9.7.0')
+    implementation ('org.hibernate.orm:hibernate-core:7.4.2.Final')
+
 }
 
 test {

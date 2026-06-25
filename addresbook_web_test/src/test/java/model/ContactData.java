@@ -48,6 +48,11 @@ public record ContactData(String id, String firstname, String middlename, String
                     this.title, this.company, this.address, this.home, this.mobile,
                     this.work, this.email, this.email2, this.email3, this.homepage, photo);
         }
+    public ContactData withAddress(String address) {
+        return new ContactData(this.id, this.firstname, this.middlename, this.lastname, this.nickname,
+                this.title, this.company, address, this.home, this.mobile,
+                this.work, this.email, this.email2, this.email3, this.homepage, this.photo);
+    }
 
 
 
