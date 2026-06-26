@@ -45,13 +45,8 @@ public class ContactRemovalTests extends TestBase{
             var newContact = new ContactData()
                     .withFirstname(CommonFunctions.randomString(10))
                     .withLastname(CommonFunctions.randomString(10));
-            app.contact().CreateContact(newContact);
+            contact = app.contact().CreateContact(newContact);
 
-
-            contact = app.jdbc().getContactByFirstnameLastname(
-                    newContact.firstname(), newContact.lastname()
-            );
-            Assertions.assertNotNull(contact, "Нет контакта в БД");
         }
         if (!app.jdbc().isContactInAnyGroup(contact)) {
             app.contact().addContactToGroup(contact);
@@ -63,4 +58,5 @@ public class ContactRemovalTests extends TestBase{
         Assertions.assertTrue(groupIdsAfterRemove.isEmpty(),
                 "Контакт всё еще состоит в группах!");
     }
+
 }
