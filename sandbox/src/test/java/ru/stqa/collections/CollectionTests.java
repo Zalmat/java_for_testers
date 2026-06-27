@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CollectionTests {
     @Test
@@ -21,12 +23,19 @@ public class CollectionTests {
 
     @Test
     void listTest(){
-        //var list = List.of("a","b","c"); //Создание списка с предустановленными значениями. НО НЕМОДИФИЦИРУЕМЫЙ
-        //var list = new ArrayList<String>(); //Создание пустого листа
-        var list = new ArrayList<>(List.of("a","b","c")); //Создание списка с предустановленными значениями. МОДИФИЦИРУЕМЫЙ
-        Assertions.assertEquals(3,list.size());
-        // list.add("a"); //Добавление эллимента в список
+        var list = new ArrayList<>(List.of("a","b","c", "a")); //Создание списка с предустановленными значениями. МОДИФИЦИРУЕМЫЙ
+        Assertions.assertEquals(4,list.size());
         Assertions.assertEquals("a", list.get(0));
         list.set(0, "d");//изминение эллимента списка
+    }
+
+    @Test
+    void setTest(){
+        var set = new HashSet<>(List.of("a", "b", "c", "a")); //При переводе лист в множество, дубликарты затираются
+        Assertions.assertEquals(3,set.size()); //Проверяем что размер == 3
+        //var element = set.stream().findAny().get(); //Вернётся случвайный элимент из множества
+
+        set.add("d");
+        Assertions.assertEquals(4,set.size()); //Благодаря new HashSet<>(можно реализовыват изменяемое в размере множество)
     }
 }

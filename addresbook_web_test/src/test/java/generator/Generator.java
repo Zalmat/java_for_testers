@@ -5,17 +5,16 @@ import com.beust.jcommander.Parameter;
 import common.CommonFunctions;
 import model.ContactData;
 import model.GroupData;
-import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.dataformat.xml.XmlMapper;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.XMLFormatter;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class Generator {
@@ -60,30 +59,28 @@ public class Generator {
 
     }
 
-    private Object generateGroups() {
-        var result = new ArrayList<GroupData>();
-        for (int i = 0; i < count; i++)
-        {
-            result.add( new GroupData()
-                    .withName(CommonFunctions.randomString(i * 10))
-                    .withFooter(CommonFunctions.randomString(i * 10))
-                    .withHeader(CommonFunctions.randomString(i * 10)));
+    private Object generatedDate(Supplier<Object> dataSupplier) {
+        return Stream.generate(dataSupplier).limit(count).collect(Collectors.toList());
+//        var result = new ArrayList<Object>();
+//        for (int i = 0; i < count; i++) {
+//            result.add(dataSupplier.get());
+//        }
+//        return result;
+    }
 
-        }
-        return result;
+    private Object generateGroups() {
+        return generatedDate(()->new GroupData()
+                .withName(CommonFunctions.randomString( 10))
+                .withFooter(CommonFunctions.randomString( 10))
+                .withHeader(CommonFunctions.randomString( 10)));
+
     }
 
     private Object generateContacts() {
-        var result = new ArrayList<ContactData>();
-        for (int i = 0; i < count; i++)
-        {
-            result.add( new ContactData()
-                    .withFirstname(CommonFunctions.randomString(i * 10))
-                    .withMiddlename(CommonFunctions.randomString(i * 10))
-                    .withLastname(CommonFunctions.randomString(i * 10)));
-
-        }
-        return result;
+        return generatedDate(()->new ContactData()
+                .withFirstname(CommonFunctions.randomString( 10))
+                .withLastname(CommonFunctions.randomString( 10))
+                .withMiddlename(CommonFunctions.randomString( 10)));
     }
     // С использованием джексона
     private void save(Object data) throws IOException {

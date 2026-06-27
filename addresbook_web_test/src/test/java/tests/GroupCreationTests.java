@@ -9,15 +9,12 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GroupCreationTests extends TestBase {
 //Генерируем проход по трём полям
@@ -52,11 +49,13 @@ public class GroupCreationTests extends TestBase {
         result.addAll(value);
         return result;
     }
-    public static List<GroupData> singleRandomGroup() throws IOException {
-        return List.of(new GroupData()
+    public static Stream<GroupData> randomGroups() throws IOException {
+        //Генерируем используя соплаеры
+        Supplier<GroupData> randomGroup = () -> new GroupData()
                 .withName(CommonFunctions.randomString(10))
                 .withHeader(CommonFunctions.randomString(20))
-                .withFooter(CommonFunctions.randomString(30)));
+                .withFooter(CommonFunctions.randomString(30));
+        return Stream.generate(randomGroup).limit(3);
     }
 //    @ParameterizedTest
 //    @ValueSource(strings = {"group name", "group name"}) //фиксированная параметризация
@@ -68,21 +67,20 @@ public class GroupCreationTests extends TestBase {
 //    }
 
     @ParameterizedTest
-    @MethodSource("singleRandomGroup")
+    @MethodSource("randomGroups")
     //@MethodSource("groupProvider") //сгененрировали входящие параметры для теста
-    public void CanCreateMultipleGroup(GroupData group)  {
+    public void CanCreateGroups(GroupData group)  {
         var oldGroups = app.hbn().getGroupList(); //Получения списка уже из БД
         app.groups().CreateGroup(group);
         var newGroups = app.hbn().getGroupList();
-        Comparator<GroupData> compareById = (o1, o2) -> {
-            return Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id())); //сравниваем индентификаторы групп
-        };
-        newGroups.sort(compareById);
+        //Строим список групп которые не встречались в старом
+        var extrasGroups = newGroups.stream().filter(g -> ! oldGroups.contains(g)).toList();
+        var newId = extrasGroups.get(0).id();
+
         var maxId = newGroups.get(newGroups.size()-1).id();
         var expectedList = new ArrayList<>(oldGroups);
         expectedList.add(group.withId(maxId));
-        expectedList.sort(compareById);
-        Assertions.assertEquals(newGroups, expectedList);
+        Assertions.assertEquals(Set.copyOf(newGroups), Set.copyOf(expectedList));
     }
 
     @ParameterizedTest

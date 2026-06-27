@@ -10,6 +10,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HibernateHelper extends HelperBase {
     private SessionFactory sessionFactory;
@@ -26,13 +27,9 @@ public class HibernateHelper extends HelperBase {
                         // Create a new SessionFactory
                         .buildSessionFactory();
     }
-
+    // Аналог подхода convertContactList. Краткий варинат.
     static List<GroupData> convertList(List<GroupRecord> records) {
-        List<GroupData> result = new ArrayList<>();
-        for (var record : records){
-            result.add(convert(record));
-        }
-        return result;
+         return records.stream().map(HibernateHelper::convert).collect(Collectors.toList());
     }
 
     static List<ContactData> convertContactList(List<ContactRecord> records) {
@@ -44,11 +41,15 @@ public class HibernateHelper extends HelperBase {
     }
 
     private static ContactData convert(ContactRecord record){
-        return new ContactData().withId("" + record.id)
+        return new ContactData()
+                .withId("" + record.id)
                 .withFirstname(record.firstname)
                 .withLastname(record.lastname)
                 .withAddress(record.address)
-                .withMiddlename(record.middlename);
+                .withMiddlename(record.middlename)
+                .withHome(record.home)
+                .withMobile(record.mobile)
+                .withWork(record.work);
     }
 
     private static GroupData convert(GroupRecord record) {
@@ -84,6 +85,7 @@ public class HibernateHelper extends HelperBase {
                 data.email2() != null ? data.email2() : "",
                 data.email3() != null ? data.email3() : "",
                 data.homepage() != null ? data.homepage() : ""
+
         );
     }
 
