@@ -109,17 +109,16 @@ public class ContactCreationTest extends TestBase {
         if (app.hbn().getGroupCount() == 0) {
             app.hbn().CreateGroup(new GroupData("", "Group", "Header", "Footer"));
         }
-        if (app.hbn().getContactCount() == 0) {
-            app.hbn().CreateContact(new ContactData()
-                    .withFirstname(CommonFunctions.randomString(10))
-                    .withLastname(CommonFunctions.randomString(10)));
-        }
         var contact = app.jdbc().getRandomContactWithoutGroup();
         if (contact == null) {
-            contact = new ContactData()
+            var newContact = new ContactData()
                     .withFirstname(CommonFunctions.randomString(10))
                     .withLastname(CommonFunctions.randomString(10));
-            app.contact().CreateContact(contact);
+            app.contact().CreateContact(newContact);
+            //Получаем контакт
+            contact = app.jdbc().getContactByFirstnameLastname(
+                    newContact.firstname(), newContact.lastname()
+            );
         }
         Assertions.assertFalse(app.jdbc().isContactInAnyGroup(contact));
         app.contact().addContactToGroup(contact);
