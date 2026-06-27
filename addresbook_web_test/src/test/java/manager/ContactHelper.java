@@ -1,6 +1,7 @@
 package manager;
 
 import model.ContactData;
+import model.ContactInfoData;
 import model.GroupData;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
@@ -185,5 +186,71 @@ public class ContactHelper extends HelperBase {
     public String getPhones(ContactData contact) {
         return manager.driver.findElement(By.xpath(
                 String.format("//input[@id='%s']/../..//td[6]", contact.id()))).getText();
+    }
+    public String getEmail(ContactData contact) {
+        return manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../..//td[5]", contact.id()))).getText();
+    }
+    public String getAddress(ContactData contact) {
+        return manager.driver.findElement(By.xpath(
+                String.format("//input[@id='%s']/../..//td[4]", contact.id()))).getText();
+    }
+
+    public String getAddressEditPage() {
+        return manager.driver.findElement(By.name("address")).getAttribute("value");
+    }
+
+    public String getHomeEditPage() {
+        return manager.driver.findElement(By.name("home")).getAttribute("value");
+    }
+
+    public String getMobileEditPage() {
+        return manager.driver.findElement(By.name("mobile")).getAttribute("value");
+    }
+
+    public String getWorkEditPage() {
+        return manager.driver.findElement(By.name("work")).getAttribute("value");
+    }
+
+    public String getEmailEditPage() {
+        return manager.driver.findElement(By.name("email")).getAttribute("value");
+    }
+
+    public String getEmail2EditPage() {
+        return manager.driver.findElement(By.name("email2")).getAttribute("value");
+    }
+
+    public String getEmail3EditPage() {
+        return manager.driver.findElement(By.name("email3")).getAttribute("value");
+    }
+
+
+    public ContactInfoData getContactInfoForComparison(ContactData contact) {
+        returnToContactPage();
+        var mainPhones = getPhones(contact);
+        var mainEmail = getEmail(contact);
+        var mainAddress = getAddress(contact);
+        initContactModification(contact);
+        var editAddress = getAddressEditPage();
+        var editHome = getHomeEditPage();
+        var editMobile = getMobileEditPage();
+        var editWork = getWorkEditPage();
+        var editEmail = getEmailEditPage();
+        var editEmail2 = getEmail2EditPage();
+        var editEmail3 = getEmail3EditPage();
+        returnToContactPage();
+        
+        return new ContactInfoData(
+                mainPhones,
+                mainEmail,
+                mainAddress,
+                editHome,
+                editMobile,
+                editWork,
+                editEmail,
+                editEmail2,
+                editEmail3,
+                editAddress
+        );
     }
 }
