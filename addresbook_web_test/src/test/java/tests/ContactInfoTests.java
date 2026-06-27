@@ -27,11 +27,13 @@ public class ContactInfoTests extends TestBase{
             app.contact().CreateContact(newContact);
         }
         var contacts = app.hbn().getContactList();
-        var contact = contacts.get(0);
-        var phones  = app.contact().getPhones(contact);
-        var expected = Stream.of(contact.home(),contact.mobile(),contact.work())
-                .filter(s -> s != null && ! "".equals(s))
-                .collect(Collectors.joining("\n"));
+        var expected = contacts.stream().collect(Collectors.toMap(ContactData::id, contact ->
+            Stream.of(contact.home(),contact.mobile(),contact.work())
+                    .filter(s -> s != null && ! "".equals(s))
+                    .collect(Collectors.joining("\n"))
+        ));
+
+        var phones  = app.contact().getPhones();
         Assertions.assertEquals(expected, phones);
     }
 
