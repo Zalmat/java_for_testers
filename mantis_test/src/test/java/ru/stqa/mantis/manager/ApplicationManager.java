@@ -1,17 +1,27 @@
 package ru.stqa.mantis.manager;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.Properties;
 
 public class ApplicationManager {
-    protected WebDriver driver;
+
+    private WebDriver driver;
+    protected WebDriverWait wait;
     private String string;
     private Properties properties;
     private SessionHelper sessionHelper;
+    private HttpSessionHelper httpSessionHelper;
+    private JamesCliHelper jamesCliHelper;
+    private MailHelper mailHelper;
+
 
     public void init(String browser, Properties properties) {
         this.string = browser;
@@ -19,29 +29,54 @@ public class ApplicationManager {
 
     }
 
-    public WebDriver driver(){
+    public WebDriver driver() {
         if (driver == null){
-            if ("firefox".equals(string)){
+            if ("firefox".equals(string)) {
                 driver = new FirefoxDriver();
-            } else if ("chrome".equals(string)){
+            } else if ("chrome".equals(string)) {
                 driver = new ChromeDriver();
-            } else if ("edge".equals(string)){
-                driver = new EdgeDriver();
+            } else if ("safari".equals(string)) {
+                driver = new SafariDriver();
             } else {
-                throw new IllegalArgumentException(String.format("Неизвестный браузер: %s", string));
+                throw new IllegalArgumentException(String.format("Unknow browser %f", string));
             }
-            Runtime.getRuntime().addShutdownHook(new Thread(driver::quit)); //заменили driver.quit();
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            Runtime.getRuntime().addShutdownHook(new Thread(driver::quit));
             driver.get(properties.getProperty("web.baseUrl"));
-            driver.manage().window().maximize(); //Было driver.manage().window().setSize(new Dimension(1920, 1080));
+            driver.manage().window().setSize(new Dimension(1400, 816));
         }
         return driver;
     }
 
     public SessionHelper session(){
-        if (sessionHelper == null) {
+        if (sessionHelper == null){
             sessionHelper = new SessionHelper(this);
         }
         return sessionHelper;
     }
 
+    public HttpSessionHelper http() {
+        if (httpSessionHelper == null){
+            httpSessionHelper = new HttpSessionHelper(this);
+        }
+        return httpSessionHelper;
+    }
+
+    public JamesCliHelper jamesCli() {
+        if (jamesCliHelper == null){
+            jamesCliHelper = new JamesCliHelper(this);
+        }
+        return jamesCliHelper;
+    }
+
+    public MailHelper mail() {
+        if (mailHelper == null){
+            mailHelper = new MailHelper(this);
+        }
+        return mailHelper;
+    }
+
+    public String property(String name){
+        return properties.getProperty(name);
+    }
 }
