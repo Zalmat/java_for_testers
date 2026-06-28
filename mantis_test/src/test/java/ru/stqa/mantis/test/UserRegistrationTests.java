@@ -29,4 +29,24 @@ public class UserRegistrationTests extends TestBase{
         app.http().login(user, "password");
         Assertions.assertTrue(app.http().isLoggedIn());
     }
+
+    @Test
+    void canRegisterUserToApi (){
+        var user = CommonFunctions.randomString(8);
+        var email = String.format("%s@localhost", user);
+        app.jamesApi().addUser(email, "password");
+        app.session().addNewUser(user, email);
+        var messages = app.mail().receive(email, "password", Duration.ofSeconds(60));
+        var text = messages.get(0).content();
+        var pattern = Pattern.compile("http://\\S*");
+        var matcher = pattern.matcher(text);
+        String url = null;
+        if (matcher.find()){
+            url = text.substring(matcher.start(), matcher.end());
+        }
+        app.driver().get(url);
+        app.session().finishedRegistration(user, "password");
+        app.http().login(user, "password");
+        Assertions.assertTrue(app.http().isLoggedIn());
+    }
 }
