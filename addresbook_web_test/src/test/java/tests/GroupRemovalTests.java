@@ -1,4 +1,4 @@
-package tests;
+п»їpackage tests;
 
 import io.qameta.allure.Allure;
 import model.ContactData;
@@ -18,26 +18,25 @@ public class GroupRemovalTests extends TestBase {
     public void canRemoveGroup() {
         Allure.step("Cheking precondition", step -> {
             if (app.hbn().getGroupCount() == 0) {
-                app.hbn().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
+                app.hbn().CreateGroup(new GroupData("", "group name", "group hider", "group footer"));
             }
         });
 
-        //Используется принцип золотого эталона
-        var oldGroups = app.hbn().getGroupList();//1.было
+
+        var oldGroups = app.hbn().getGroupList();
         var rnd = new Random();
-        var index = rnd.nextInt(oldGroups.size()); //2. Случайным образом выбираем элемент из списка
-        app.groups().removeGroup(oldGroups.get(index)); //3. Удаляем выбранное
-        var newGroups = app.hbn().getGroupList();//4. Получаем новое состояние после удаления
-        // 5. Создается модель/обьект ожидаемого результата
-        var expectedList = new ArrayList<>(oldGroups); // копираем
-        expectedList.remove(index); //удаляем из копии аналогично с шагом 3
+        var index = rnd.nextInt(oldGroups.size());
+        app.groups().removeGroup(oldGroups.get(index));
+        var newGroups = app.hbn().getGroupList();
+        var expectedList = new ArrayList<>(oldGroups);
+        expectedList.remove(index);
         Comparator<GroupData> compareById = (o1, o2) ->
                 Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
         newGroups.sort(compareById);
         expectedList.sort(compareById);
 
         Allure.step("Validating results", step -> {
-            Assertions.assertEquals(newGroups,expectedList); //Сравниваем
+            Assertions.assertEquals(newGroups,expectedList);
         });
 
     }
@@ -45,7 +44,7 @@ public class GroupRemovalTests extends TestBase {
     @Test
     public void canRemoveAllGroupsAtOnce(){
         if (app.hbn().getGroupCount() == 0) {
-            app.hbn().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
+            app.hbn().CreateGroup(new GroupData("", "group name", "group hider", "group footer"));
         }
         app.groups().removeAllGroups();
         Assertions.assertEquals(0, app.hbn().getGroupCount());
@@ -53,7 +52,7 @@ public class GroupRemovalTests extends TestBase {
     @Test
     public void canRemoveAllGroupsAtOnceToDB(){
         if (app.hbn().getGroupCount() == 0) {
-            app.hbn().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
+            app.hbn().CreateGroup(new GroupData("", "group name", "group hider", "group footer"));
         }
         app.groups().removeAllGroups();
         Assertions.assertEquals(0, app.hbn().getGroupCount());
@@ -62,22 +61,22 @@ public class GroupRemovalTests extends TestBase {
     @Test
     public void canRemoveGroupToDB() {
         if (app.hbn().getGroupCount() == 0) {
-            app.hbn().CreateGroup(new GroupData("", "Имя группы", "Заголовок группы", "Футер группы"));
+            app.hbn().CreateGroup(new GroupData("", "group name", "group hider", "group footer"));
         }
-        //Используется принцип золотого эталона
-        var oldGroups = app.hbn().getGroupList(); //1.было
+        //РСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРёРЅС†РёРї Р·РѕР»РѕС‚РѕРіРѕ СЌС‚Р°Р»РѕРЅР°
+        var oldGroups = app.hbn().getGroupList(); //1..Р±С‹Р»Рѕ
         var rnd = new Random();
-        var index = rnd.nextInt(oldGroups.size()); //2. Случайным образом выбираем элемент из списка
-        app.groups().removeGroup(oldGroups.get(index)); //3. Удаляем выбранное
-        var newGroups = app.hbn().getGroupList(); //4. Получаем новое состояние после удаления
-        // 5. Создается модель/обьект ожидаемого результата
-        var expectedList = new ArrayList<>(oldGroups); // копираем
-        expectedList.remove(index); //удаляем из копии аналогично с шагом 3
+        var index = rnd.nextInt(oldGroups.size()); //2. РЎР»СѓС‡Р°Р№РЅС‹Рј РѕР±СЂР°Р·РѕРј РІС‹Р±РёСЂР°РµРј СЌР»РµРјРµРЅС‚ РёР· СЃРїРёСЃРєР°
+        app.groups().removeGroup(oldGroups.get(index)); //3. РЈРґР°Р»СЏРµРј РІС‹Р±СЂР°РЅРЅРѕРµ
+        var newGroups = app.hbn().getGroupList(); //4. РџРѕР»СѓС‡Р°РµРј РЅРѕРІРѕРµ СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЃР»Рµ СѓРґР°Р»РµРЅРёСЏ
+        // 5. РЎРѕР·РґР°РµС‚СЃСЏ РјРѕРґРµР»СЊ/РѕР±СЊРµРєС‚ РѕР¶РёРґР°РµРјРѕРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+        var expectedList = new ArrayList<>(oldGroups); //РєРѕРїРёСЂСѓРµРј
+        expectedList.remove(index); //СѓРґР°Р»СЏРµРј РёР· РєРѕРїРёРё Р°РЅР°Р»РѕРіРёС‡РЅРѕ СЃ С€Р°РіРѕРј 3
         Comparator<GroupData> compareById = (o1, o2) ->
                 Integer.compare(Integer.parseInt(o1.id()), Integer.parseInt(o2.id()));
         newGroups.sort(compareById);
         expectedList.sort(compareById);
-        Assertions.assertEquals(newGroups,expectedList); //Сравниваем
+        Assertions.assertEquals(newGroups,expectedList); //РЎСЂР°РІРЅРёРІР°РµРј
     }
 
 }
