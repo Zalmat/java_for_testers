@@ -41,21 +41,33 @@ public class HibernateHelper extends HelperBase {
         return result;
     }
 
+    @Step
     private static ContactData convert(ContactRecord record){
         return new ContactData()
                 .withId("" + record.id)
-                .withFirstname(record.firstname)
-                .withLastname(record.lastname)
-                .withAddress(record.address)
-                .withMiddlename(record.middlename)
-                .withHome(record.home)
-                .withMobile(record.mobile)
-                .withWork(record.work);
+                .withFirstname(record.firstname != null ? record.firstname : "")
+                .withLastname(record.lastname != null ? record.lastname : "")
+                .withAddress(record.address != null ? record.address : "")
+                .withMiddlename(record.middlename != null ? record.middlename : "")
+                .withNickname(record.nickname != null ? record.nickname : "")
+                .withTitle(record.title != null ? record.title : "")
+                .withCompany(record.company != null ? record.company : "")
+                .withHome(record.home != null ? record.home : "")
+                .withMobile(record.mobile != null ? record.mobile : "")
+                .withWork(record.work != null ? record.work : "")
+                .withFax(record.fax != null ? record.fax : "")
+                .withEmail(record.email != null ? record.email : "")
+                .withEmail2(record.email2 != null ? record.email2 : "")
+                .withEmail3(record.email3 != null ? record.email3 : "")
+                .withHomepage(record.homepage != null ? record.homepage : "");
     }
 
+    @Step
     private static GroupData convert(GroupRecord record) {
         return new GroupData("" + record.id, record.name, record.header, record.footer);
     }
+
+    @Step
     private static GroupRecord convert(GroupData data) {
         var id = data.id();
         if ("".equals(id)) {
@@ -64,6 +76,7 @@ public class HibernateHelper extends HelperBase {
         return new GroupRecord(Integer.parseInt(id), data.name(), data.hider(), data.footer());
     }
 
+    @Step
     private static ContactRecord convert(ContactData data) {
         var id = data.id();
         if ("".equals(id)) {
@@ -96,18 +109,20 @@ public class HibernateHelper extends HelperBase {
             return session.createQuery("from GroupRecord", GroupRecord.class).list();
         }));
     }
+    @Step
     public List<ContactData> getContactList() {
         return convertContactList(sessionFactory.fromSession(session -> {
             return session.createQuery("from ContactRecord", ContactRecord.class).list();
         }));
     }
-
+    @Step
     public long getGroupCount() {
         return sessionFactory.fromSession(session -> {
             //"from GroupRecord" это не название таблицы, а название класса
             return session.createQuery("select count (*) from GroupRecord", Long.class).getSingleResult();
         });
     }
+    @Step
     public long getContactCount() {
         return sessionFactory.fromSession(session -> {
             //"from GroupRecord" это не название таблицы, а название класса
@@ -124,7 +139,7 @@ public class HibernateHelper extends HelperBase {
             session.getTransaction().commit();
         });
     }
-
+    @Step
     public void CreateContact(ContactData contactData) {
 
         sessionFactory.inSession(session -> {
@@ -133,7 +148,7 @@ public class HibernateHelper extends HelperBase {
             session.getTransaction().commit();
         });
     }
-
+    @Step
     public List<ContactData> getContactsInGroup(GroupData group) {
         return sessionFactory.fromSession(session -> {
             return convertContactList(session.find(GroupRecord.class, group.id()).contacts); //в новой версии вместо get(), теперь find()

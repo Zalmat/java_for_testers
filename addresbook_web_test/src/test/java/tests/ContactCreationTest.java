@@ -38,7 +38,7 @@ public class ContactCreationTest extends TestBase {
         var expectedContact = new ContactData()
                 .withId(newId)
                 .withFirstname(contact.firstname())
-                .withMiddlename("")
+                .withMiddlename(contact.middlename())
                 .withLastname(contact.lastname());
         expectedList.add(expectedContact);
         expectedList.sort(compareById);

@@ -21,7 +21,7 @@ public class GroupHelper extends HelperBase{
         }
     }
 
-
+    @Step
     public void modifyGroup(GroupData group, GroupData modifyGroup) {
         OpenGroupsPage();
         selectGroup(group);
@@ -30,7 +30,7 @@ public class GroupHelper extends HelperBase{
         submitGroupModification();
         returnToGroupsPage();
     }
-
+    @Step("Создать новую группу: {group}")
     public void CreateGroup(GroupData group) {
         OpenGroupsPage();
         initGroupCreation();
@@ -39,12 +39,13 @@ public class GroupHelper extends HelperBase{
         returnToGroupsPage();
     }
 
+    @Step
     private void submitGroupCtreation() {
         click(By.name("submit"));
     }
 
 
-
+    @Step
     private void initGroupCreation() {
         click(By.name("new"));
     }
@@ -57,28 +58,34 @@ public class GroupHelper extends HelperBase{
         returnToGroupsPage();
     }
 
+    @Step
     private void removeSelectedGroups() {
         click(By.name("delete"));
     }
 
-
+    @Step
     private void submitGroupModification() {
         click(By.name("update"));
     }
 
+    @Step
     private void fillGroupForm(GroupData group) {
         type(By.name("group_name"), group.name());
         type(By.name("group_header"), group.hider());
         type(By.name("group_footer"), group.footer());
     }
 
+    @Step
     private void initGroupModification() {
         click(By.name("edit"));
     }
 
+    @Step
     private void selectGroup(GroupData group) {
         click(By.cssSelector(String.format("input[value='%s']",group.id())));
     }
+
+    @Step
     private void returnToGroupsPage() {
         click(By.linkText("group page"));
     }
@@ -89,12 +96,14 @@ public class GroupHelper extends HelperBase{
 
     }
 
+    @Step
     public void removeAllGroups() {
         OpenGroupsPage();
         selectAllGroups();
         removeSelectedGroups();
     }
 
+    @Step
     private void selectAllGroups() {
         manager.driver
                 .findElements(By.name("selected[]"))

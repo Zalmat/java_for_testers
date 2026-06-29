@@ -1,5 +1,6 @@
 package manager;
 
+import io.qameta.allure.Step;
 import model.ContactData;
 import model.GroupData;
 import java.sql.DriverManager;
@@ -32,6 +33,7 @@ public class JdbcHelper extends HelperBase {
         return groups;
     }
 
+    @Step
     public void checkConsistency() {
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root","");
              var statement = conn.createStatement();
@@ -49,6 +51,7 @@ public class JdbcHelper extends HelperBase {
         }
 
     }
+    @Step
     public ContactData getRandomContactWithoutGroup() {
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
              var statement = conn.createStatement();
@@ -75,7 +78,7 @@ public class JdbcHelper extends HelperBase {
             throw new RuntimeException(e);
         }
     }
-
+    @Step
     public boolean isContactInAnyGroup(ContactData contact) {
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
              var statement = conn.createStatement();
@@ -93,6 +96,7 @@ public class JdbcHelper extends HelperBase {
         }
     }
     //Возвращаем ID групп которые нужно отвязать
+    @Step("Возвращаем ID групп которые нужно отвязать")
     public List<Integer> getGroupIdsForContact(ContactData contact) {
         var groupIds = new ArrayList<Integer>();
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
@@ -109,7 +113,7 @@ public class JdbcHelper extends HelperBase {
         }
         return groupIds;
     }
-    //Костыль..
+    @Step
     public ContactData getContactByFirstnameLastname(String firstname, String lastname) {
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
              var statement = conn.createStatement();
@@ -132,7 +136,7 @@ public class JdbcHelper extends HelperBase {
             throw new RuntimeException(e);
         }
     }
-
+    @Step
     public String getAnyContactId() {
         try (var conn = DriverManager.getConnection("jdbc:mysql://localhost/addressbook", "root", "");
              var statement = conn.createStatement();
@@ -140,7 +144,7 @@ public class JdbcHelper extends HelperBase {
                      "SELECT id FROM addressbook LIMIT 1")) {
 
             if (result.next()) {
-                return result.getString("id"); 
+                return result.getString("id");
             }
             return null;
         } catch (SQLException e) {

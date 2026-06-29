@@ -1,5 +1,7 @@
 package manager;
 
+import io.qameta.allure.Allure;
+import io.qameta.allure.Step;
 import model.ContactData;
 import model.ContactInfoData;
 import model.GroupData;
@@ -7,10 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ContactHelper extends HelperBase {
 
@@ -22,19 +21,23 @@ public class ContactHelper extends HelperBase {
      * Создаёт новый контакт через UI и возвращает объект с заполненным ID,
      * полученным из базы данных.
      */
+    @Step("Создаёт новый контакт через UI и возвращает объект с заполненным ID, полученным из базы данных.")
     public ContactData CreateContact(ContactData contact) {
         openContactPageCreateForm();
         fillContactForm(contact);
         submitContactCreation();
         returnToContactPage();
 
-        return findCreatedContact(contact);
+        return Allure.step("Найти созданный контакт по имени: " + contact.firstname() + " " + contact.lastname(), () -> {
+            return findCreatedContact(contact);
+        });
     }
 
     /**
      * Создаёт новый контакт с привязкой к группе через UI и возвращает объект
      * с заполненным ID.
      */
+    @Step("Создать контакт в группе ")
     public ContactData CreateContact(ContactData contact, GroupData group) {
         openContactPageCreateForm();
         fillContactForm(contact);
@@ -45,19 +48,18 @@ public class ContactHelper extends HelperBase {
         return findCreatedContact(contact);
     }
 
+    @Step("Найти созданный контакт")
     private ContactData findCreatedContact(ContactData contact) {
-        ContactData created = manager.jdbc().getContactByFirstnameLastname(
-                contact.firstname(), contact.lastname()
-        );
-        if (created == null) {
-            throw new RuntimeException(
-                    "Не удалось найти созданный контакт по имени и фамилии: "
-                            + contact.firstname() + " " + contact.lastname()
-            );
-        }
-        return created;
+        // Получаем все контакты из базы
+        var allContacts = manager.hbn().getContactList();
+
+        // Ищем контакт с максимальным ID (самый новый)
+        return allContacts.stream()
+                .max(Comparator.comparingInt(c -> Integer.parseInt(c.id())))
+                .orElseThrow(() -> new RuntimeException("Не удалось найти созданный контакт"));
     }
 
+    @Step
     public void removeContact(ContactData contact) {
         returnToContactPage();
         selectContact(contact);
@@ -65,10 +67,12 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
+    @Step
     private void removeSelectedContact() {
         click(By.name("delete"));
     }
 
+    @Step
     private void selectContact(ContactData contact) {
         click(By.cssSelector(String.format("input[type='checkbox'][value='%s']", contact.id())));
     }
@@ -90,11 +94,13 @@ public class ContactHelper extends HelperBase {
         return contacts;
     }
 
+
     public boolean isContactPresent() {
         returnToContactPage();
         return manager.isElementPresent(By.name("selected[]"));
     }
 
+    @Step
     public void modifyContact(ContactData contact, ContactData modifyContact) {
         returnToContactPage();
         selectContact(contact);
@@ -112,6 +118,7 @@ public class ContactHelper extends HelperBase {
         click(By.cssSelector(String.format("a[href='edit.php?id=%s']", contact.id())));
     }
 
+    @Step
     public void addContactToGroup(ContactData contact) {
         returnToContactPage();
         selectContact(contact);
@@ -120,6 +127,7 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
+    @Step
     private void selectFirstGroupToAdd() {
         var select = new Select(manager.driver.findElement(By.name("to_group")));
         var options = select.getOptions();
@@ -128,10 +136,12 @@ public class ContactHelper extends HelperBase {
         }
     }
 
+    @Step
     private void submitContactToGroup() {
         click(By.name("add"));
     }
 
+    @Step
     public void removeContactFromGroup(ContactData contact, GroupData group) {
         returnToContactPage();
         selectGroupToShow(group);
@@ -140,20 +150,24 @@ public class ContactHelper extends HelperBase {
         returnToContactPage();
     }
 
+    @Step
     private void
     selectGroupToShow(GroupData group) {
         var select = new Select(manager.driver.findElement(By.name("group")));
         select.selectByValue(group.id());
     }
 
+    @Step
     private void submitRemoveContactToGroup() {
         click(By.name("remove"));
     }
 
+    @Step
     public void openContactPageCreateForm() {
         click(By.linkText("add new"));
     }
 
+    @Step
     private void fillContactForm(ContactData contact) {
         type(By.name("firstname"), contact.firstname());
         type(By.name("middlename"), contact.middlename());
@@ -174,6 +188,7 @@ public class ContactHelper extends HelperBase {
         }
     }
 
+    @Step
     private void submitContactCreation() {
         click(By.name("submit"));
     }
@@ -227,7 +242,7 @@ public class ContactHelper extends HelperBase {
         return manager.driver.findElement(By.name("email3")).getAttribute("value");
     }
 
-
+    @Step
     public ContactInfoData getContactInfoForComparison(ContactData contact) {
         returnToContactPage();
         var mainPhones = getPhones(contact);
